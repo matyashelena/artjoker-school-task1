@@ -59,14 +59,23 @@ console.log(isPalindrom("hello"));
 // 3. Реализовать вычисление, периметра/площади, для треугольника, прямоугольника и круга. Реализовать с помощью функций и с помощью классов.
 
 class Triangle {
-  constructor (height, length1, length2, length3) {
-    this.height = height;
+  constructor (length1, length2, length3) {
     this.length1 = length1;
     this.length2 = length2;
     this.length3 = length3;
   }
   square() {
-    return (this.height * this.length1) / 2;
+    function squareroot(n) {
+      let root = 1;
+      for (let i = 0; i < n+1; i++) {
+        root = (n / root + root) / 2;
+      }
+      return root;
+    }
+    let halfPerimetr = (this.length1 + this.length2 + this.length3) / 2;
+    let result = halfPerimetr * (halfPerimetr - this.length1) * (halfPerimetr - this.length2) * (halfPerimetr - this.length3);
+    let resultSquare = squareroot(result);
+    return Math.floor(resultSquare);
   }
   perimeter() {
     return this.length1 + this.length2 + this.length3;
@@ -88,7 +97,7 @@ class Rectangle {
 
 class Circle {
   constructor (radius) {
-  this.radius = radius
+    this.radius = radius
   }
   square() {
     return Math.floor(Math.PI * (this.radius ** 2));
@@ -97,7 +106,8 @@ class Circle {
     return Math.ceil(2 * Math.PI * this.radius);
   }
 }
-let triangle = new Triangle(10, 25, 15, 12);
+
+let triangle = new Triangle(5, 8, 11);
 let rectangle = new Rectangle(20, 50);
 let circle = new Circle(10);
 console.log("Площадь треугольника " + triangle.square());
@@ -158,7 +168,7 @@ function negativeNumberRec() {
   negativeNumberRec();
   return negativeNumber.length;
 }
-console.log("Колличество элементов чисел в массиве: " + negativeNumberRec());
+console.log("Колличество отрицательных элементов в массиве: " + negativeNumberRec());
 
 let positiveNumber = [];
 let currentPositiveArr = 0;
@@ -270,7 +280,9 @@ let matrix2 = [
 ];
 function transMatrix(arr) {
   let resultTransMatrix = [];
-  if (arr.length == 0) {return false;}
+  if (arr.length == 0) {
+    return false;
+  }
   for (let i = 0; i < arr[0].length; i++) {
     resultTransMatrix[i] = [];
     for (let j = 0; j < arr.length; j++)
@@ -404,6 +416,7 @@ let obj = {
   name: "Lisa",
   fn: 25
 }
+console.log(customBind(getName, obj));
 let getNameMyBind = customBind(getName, obj);
 console.log(getNameMyBind());
 console.log(customCall(getName, obj));
@@ -448,3 +461,7 @@ function customForEach(arr) {
 }
 console.log(customForEach(arrForEach));
 console.log(customForEach(randomArray));
+
+let f = function(){};
+let f2 = f.customCall({a: 10}, 2);
+console.log(f2);
