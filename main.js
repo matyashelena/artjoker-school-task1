@@ -24,56 +24,49 @@ for (let i = 0; i < 20; i++) {
 const recFibo = (n) => {
   if (n < 0) {
     return console.error("Введено некоректное значение")
-  } else if (n === 0) {
-    return 0;
-  } else if (n === 1) {
-    return 1;
+  } else if (n <= 1) {
+    return n;
   } else {
     return recFibo(n-2) + recFibo(n-1)
   }
 };
 console.log(recFibo(19));
+console.log(recFibo(20));
 
-// мемоизированная функция высшего порядка для вычисления чисел фибоначчи
-
-function memo(fun){
-    let cache = {}
-    return function (n){
-        if (cache[n] != undefined ) {
-          return cache[n];
-        } else {
-          let result = fun(n);
-          cache[n] = result;
-          return result;
-        }
-    }
+// мемоизированная функция вычисления чисел фибоначчи
+function fibMemo(n, cache) {
+  cache = cache || [];
+  if (n <= 1) {
+    return n;
+  } else if (cache[n]) {
+    return cache[n];
+  } else {
+    cache[n] = fibMemo(n-2, cache) + fibMemo(n-1, cache);
+  }
+  return cache[n];
 }
-const fiboMemoFunction = memo(recFibo);
-console.log(fiboMemoFunction(19));
+console.log(fibMemo(20));
 
 //2. Написать функцию которая проверяет, является ли строка палиндромом.
 
 function isPalindrom(str) {
   str = str.toLowerCase().replace(/\s+/g, '');
-  if (str == str.split('').reverse().join('')) {
-    return "Yes, it is Palindrom"
-  } else {
-    return "No, it is not Palindrom"
-  }
+   return (str == str.split('').reverse().join(''));
 }
 console.log(isPalindrom('А роза упала на лапу Азора'));
+console.log(isPalindrom("hello"));
 
 // 3. Реализовать вычисление, периметра/площади, для треугольника, прямоугольника и круга. Реализовать с помощью функций и с помощью классов.
 
 class Triangle {
-  constructor (base, length1, length2, length3) {
-    this.base = base;
+  constructor (height, length1, length2, length3) {
+    this.height = height;
     this.length1 = length1;
     this.length2 = length2;
     this.length3 = length3;
   }
   square() {
-    return (this.base * this.length1) / 2;
+    return (this.height * this.length1) / 2;
   }
   perimeter() {
     return this.length1 + this.length2 + this.length3;
@@ -126,7 +119,9 @@ function minNumberArrayRec() {
     minNumber = arr[currentMaxArr];
   }
 
-  if (currentMinArr > arr.length) return;
+  if (currentMinArr > arr.length) {
+    return;
+  }
   minNumberArrayRec();
   return minNumber;
 }
@@ -139,7 +134,9 @@ function maxNumberArrayRec() {
     maxNumberRec = arr[currentMaxArr];
   }
 
-  if (currentMaxArr > arr.length) return;
+  if (currentMaxArr > arr.length) {
+    return;
+  }
   maxNumberArrayRec();
   return maxNumberRec;
 }
@@ -155,7 +152,9 @@ function negativeNumberRec() {
       negativeNumber.push(arr[currentNegativeArr]);
     }
 
-  if (currentNegativeArr > arr.length) return;
+  if (currentNegativeArr > arr.length) {
+    return;
+  }
   negativeNumberRec();
   return negativeNumber.length;
 }
@@ -168,7 +167,10 @@ function positiveNumbersRec() {
   if (arr[currentPositiveArr] > 0) {
     positiveNumber.push(arr[currentPositiveArr]);
   }
-  if (currentPositiveArr > arr.length) return;
+  if (currentPositiveArr > arr.length) {
+    return;
+  }
+
   positiveNumbersRec();
   return positiveNumber.length;
 }
@@ -181,7 +183,9 @@ function zeroNumbersRec() {
   if (arr[currentZeroArr] > 0) {
     zeroNumber.push(arr[currentZeroArr]);
   }
-  if (currentZeroArr > arr.length) return;
+  if (currentZeroArr > arr.length) {
+    return;
+  }
   positiveNumbersRec();
   return zeroNumber.length;
 }
@@ -189,26 +193,26 @@ console.log("Колличество нулевых элементов в мас�
 
 // 5. Написать функцию преобразования целого числа из десятичной системы счисления в двоичную и наоборот.
 
-function converterBinary(n) {
+function converterBinary(number) {
   let result = [];
-  while (n > 0) {
-    result.unshift(n % 2);
-    n = Math.floor(n / 2);
+  while (number > 0) {
+    result.unshift(number % 2);
+    number = Math.floor(number / 2);
   }
   return result.join('');
 }
 
-function converterDecimal(n) {
-  if (typeof n === 'number') {
-    n = String(n)
+function converterDecimal(number) {
+  if (typeof number === 'number') {
+    number = String(number)
   }
-  n = n.split('').reverse();
+  number = number.split('').reverse();
   let result = 0;
-  let degree = 0;
-  for (let i = 0; i < n.length; i++) {
-    n[i] = +n[i] * (2 ** degree);
-    result += n[i];
-    degree++;
+  let currentToExponentiation = 0;
+  for (let i = 0; i < number.length; i++) {
+    number[i] = +number[i] * (2 ** currentToExponentiation);
+    result += number[i];
+    currentToExponentiation++;
   }
   return result;
 }
@@ -241,7 +245,15 @@ function recFactorial(n) {
 }
 console.log(recFactorial(10));
 
-const memoFactorial = memo(recFactorial);
+function memoFactorial(n, cache) {
+  cache = cache || [1];
+  if (cache[n]) {
+    return cache[n];
+  } else {
+    cache[n] = n * memoFactorial(n-1, cache);
+  }
+  return cache[n];
+}
 console.log(memoFactorial(10));
 
 // 8. Транспонировать матрицу, сложить две матрицы.
@@ -258,6 +270,7 @@ let matrix2 = [
 ];
 function transMatrix(arr) {
   let resultTransMatrix = [];
+  if (arr.length == 0) {return false;}
   for (let i = 0; i < arr[0].length; i++) {
     resultTransMatrix[i] = [];
     for (let j = 0; j < arr.length; j++)
@@ -395,38 +408,43 @@ let getNameMyBind = customBind(getName, obj);
 console.log(getNameMyBind());
 console.log(customCall(getName, obj));
 
-function customMap() {
-  let a = [1, 2, 3, 4, 5];
-  let b = [];
-  for (let i = 0; i < a.length; i++) {
-    b[i] = a[i] + 1;
+let randomArray = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+let randomArray1 = [45, 36, -10, 0, 21, 78];
+function customMap(arr) {
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    result[i] = arr[i] + 1;
   }
-  return b;
+  return result;
 }
+console.log(customMap(randomArray));
+console.log(customMap(randomArray1));
 
-function customFilter() {
-  let a = [1, -1, 2, 3, -3, 4, 5, -5];
-  let b = [];
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] >= 0) b.push(a[i]);
+function customFilter(arr) {
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] >= 5) result.push(arr[i]);
   }
-  return b;
+  return result;
 }
+console.log(customFilter(randomArray));
+console.log(customFilter(randomArray1));
 
-function customReduce() {
-  let a = [1, 2, 3, 4, 5];
+function customReduce(arr) {
   let sum = 0;
-  for (const n of a) {
+  for (const n of arr) {
     sum += n;
   }
   return sum;
 }
+console.log(customReduce(randomArray));
 
 let arrForEach = ["zero", "one", "twoo", "three", "four"];
 function customForEach(arr) {
   for (let i = 0; i < arr.length; i++) {
-     console.log(`index ${i}: ${arr[i]}`);
+     console.log( `index ${i}: ${arr[i]}`);
   }
-  return "it is custom forEach";
+   return "it is custom forEach";
 }
 console.log(customForEach(arrForEach));
+console.log(customForEach(randomArray));
