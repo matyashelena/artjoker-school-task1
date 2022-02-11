@@ -30,8 +30,6 @@ const recFibo = (n) => {
     return recFibo(n-2) + recFibo(n-1)
   }
 };
-console.log(recFibo(19));
-console.log(recFibo(20));
 
 // мемоизированная функция вычисления чисел фибоначчи
 function fibMemo(n, cache) {
@@ -45,16 +43,17 @@ function fibMemo(n, cache) {
   }
   return cache[n];
 }
-console.log(fibMemo(20));
 
 //2. Написать функцию которая проверяет, является ли строка палиндромом.
 
 function isPalindrom(str) {
   str = str.toLowerCase().replace(/\s+/g, '');
-   return (str == str.split('').reverse().join(''));
+  let reverseStr = '';
+  for (let i = 0; i < str.length; i++) {
+    reverseStr += str[(str.length - 1) - i];
+  }
+  return (str == reverseStr);
 }
-console.log(isPalindrom('А роза упала на лапу Азора'));
-console.log(isPalindrom("hello"));
 
 // 3. Реализовать вычисление, периметра/площади, для треугольника, прямоугольника и круга. Реализовать с помощью функций и с помощью классов.
 
@@ -120,59 +119,48 @@ console.log("Длина окружности " + circle.circumference());
 
 // 4. Найти минимальный, максимальный элемент массива. Подсчитать количество нулевых, положительных и отрицательных элементов массива. Написать соответствующие рекурсивные функции.
 
-let arr = [7, 10, 1, -12, 2, -158, 1000, 3, 4, 5, -132];
-let minNumber = arr[0];
-let currentMinArr = 1;
-function minNumberArrayRec() {
-  currentMinArr++;
-  if (arr[currentMinArr] < minNumber) {
-    minNumber = arr[currentMaxArr];
-  }
+let anyArray = [7, 10, 1, -12, 2, -158, 1000, 3, 4, 5, -132];
+console.log(anyArray);
+console.log(Math.min.apply(Math, anyArray));
+console.log(Math.max.apply(Math, anyArray));
 
-  if (currentMinArr > arr.length) {
-    return;
+function minNumberArrayRec(arr) {
+  if (arr.length === 1) {
+    return arr[0];
+  } else if (arr[0] > arr[1]) {
+    return minNumberArrayRec(arr.slice(1));
+  } else {
+    return minNumberArrayRec([arr[0]].concat(arr.slice(2)));
   }
-  minNumberArrayRec();
-  return minNumber;
 }
 
-let maxNumberRec = arr[0];
-let currentMaxArr = 0;
-function maxNumberArrayRec() {
-  currentMaxArr++;
-  if (arr[currentMaxArr] > maxNumberRec) {
-    maxNumberRec = arr[currentMaxArr];
+function maxNumberArrayRec(arr) {
+  if (arr.length === 1) {
+    return arr[0];
+  } else if (arr[0] < arr[1]) {
+    return maxNumberArrayRec(arr.slice(1));
+  } else {
+    return maxNumberArrayRec([arr[0]].concat(arr.slice(2)));
   }
-
-  if (currentMaxArr > arr.length) {
-    return;
-  }
-  maxNumberArrayRec();
-  return maxNumberRec;
 }
-
-console.log("Минимальное значение = " + minNumberArrayRec());
-console.log("Максимальное значение = " + maxNumberArrayRec());
 
 let negativeNumber = [];
 let currentNegativeArr = 0;
-function negativeNumberRec() {
+function negativeNumberRec(arr) {
   currentNegativeArr++;
   if (arr[currentNegativeArr] < 0) {
       negativeNumber.push(arr[currentNegativeArr]);
     }
-
   if (currentNegativeArr > arr.length) {
     return;
   }
-  negativeNumberRec();
+  negativeNumberRec(arr);
   return negativeNumber.length;
 }
-console.log("Колличество отрицательных элементов в массиве: " + negativeNumberRec());
 
 let positiveNumber = [];
 let currentPositiveArr = 0;
-function positiveNumbersRec() {
+function positiveNumbersRec(arr) {
   currentPositiveArr++;
   if (arr[currentPositiveArr] > 0) {
     positiveNumber.push(arr[currentPositiveArr]);
@@ -180,26 +168,30 @@ function positiveNumbersRec() {
   if (currentPositiveArr > arr.length) {
     return;
   }
-
-  positiveNumbersRec();
+  
+  positiveNumbersRec(arr);
   return positiveNumber.length;
 }
-console.log("Колличество положительных элементов в массиве: " + positiveNumbersRec());
 
 let zeroNumber = [];
 let currentZeroArr = 0;
-function zeroNumbersRec() {
+function zeroNumbersRec(arr) {
   currentZeroArr++;
-  if (arr[currentZeroArr] > 0) {
+  if (arr[currentZeroArr] === 0) {
     zeroNumber.push(arr[currentZeroArr]);
   }
   if (currentZeroArr > arr.length) {
     return;
   }
-  positiveNumbersRec();
+  positiveNumbersRec(arr);
   return zeroNumber.length;
 }
-console.log("Колличество нулевых элементов в массиве: " + zeroNumbersRec());
+
+console.log("Минимальное значение = " + minNumberArrayRec(anyArray));
+console.log("Максимальное значение = " + maxNumberArrayRec(anyArray));
+console.log("Колличество положительных элементов в массиве: " + positiveNumbersRec(anyArray));
+console.log("Колличество отрицательных элементов в массиве: " + negativeNumberRec(anyArray));
+console.log("Колличество нулевых элементов в массиве: " + zeroNumbersRec(anyArray));
 
 // 5. Написать функцию преобразования целого числа из десятичной системы счисления в двоичную и наоборот.
 
@@ -227,19 +219,12 @@ function converterDecimal(number) {
   return result;
 }
 
-console.log(converterBinary(25));
-console.log((25).toString(2));
-console.log(converterDecimal(11001));
-console.log(converterDecimal(1000))
-console.log((8).toString(2));
-console.log(parseInt(11001, 2));
-
 
 // 6. Посчитать факториал числа. Написать рекурсивную функцию вычисления факториала числа. Написать мемоизированную функцию высшего порядка для вычисления факториала.
 
 function factorial(n) {
   let result = 1;
-  for (let i = 1; i <= n; i++) {
+  for (let i = 2; i <= n; i++) {
     result *= i;
   }
   return result;
@@ -253,18 +238,19 @@ function recFactorial(n) {
     return n * recFactorial(n-1);
   }
 }
-console.log(recFactorial(10));
 
-function memoFactorial(n, cache) {
-  cache = cache || [1];
-  if (cache[n]) {
-    return cache[n];
+function memoFactorial(n) {
+  let cache = {};
+  if (n === 2) {
+    return 2;
   } else {
-    cache[n] = n * memoFactorial(n-1, cache);
+    if (n in cache) {
+      return cache[n];
+    } else {
+      return cache[n] = n * memoFactorial(n-1);
+    }
   }
-  return cache[n];
 }
-console.log(memoFactorial(10));
 
 // 8. Транспонировать матрицу, сложить две матрицы.
 
@@ -290,7 +276,6 @@ function transMatrix(arr) {
     }
   return resultTransMatrix;
 }
-console.log(transMatrix(matrix1));
 
 function sumMatrix(arr1, arr2) {
   let result = [];
@@ -300,64 +285,6 @@ function sumMatrix(arr1, arr2) {
   }
   return result;
 }
-console.log(sumMatrix(matrix1, matrix2));
-
-// 8. Посчитать сумму/количество нулевых элементов/среднее значение элементов матрицы над и под главной диагональю.
-
- let matrix = [
-   [24, 38, 0, 10],
-   [12, 0, 72, 136],
-   [99, 16, 33, 0],
-   [458, 11, 0, 1]
- ];
-
- function averageAboveValue(arr) {
-  let result = [];
-   for (const n in arr) {
-    result.push(...arr[n]
-      .filter((element, index) => n < index));
-  }
-  return result;
- }
-let resultAboveArray = averageAboveValue(matrix);
-
- function averageUnderValue(arr) {
-  let result = [];
-  let sum = 0;
-  for (const n in arr) {
-    result.push(...arr[n].filter((element, index) => n > index));
-  }
-  return result;
- }
-let resultUnderArray = averageUnderValue(matrix);
-
- function sumMeanElemMatrix(arrResult) {
-   let sum = 0;
-   let meanValue = 0;
-   for (let i = 0; i < arrResult.length; i++) {
-     sum += arrResult[i];
-   }
-   meanValue = Math.round(sum / arrResult.length);
-
-  return ["Сумма " + sum, "Среднее значение " + meanValue];
- }
-
- function zeroMatrix(arr) {
-   let result = [];
-   for (let i = 0; i < arr.length; i++) {
-     for (let j = 0; j < arr[0].length; j++) {
-       if (arr[i][j] == 0) {
-         result.push(arr[i][j]);
-       }
-     }
-   }
-   return result.length;
- } 
-console.log(zeroMatrix(matrix));
-console.log(resultAboveArray);
-console.log(sumMeanElemMatrix(resultAboveArray));
-console.log(resultUnderArray);
-console.log(sumMeanElemMatrix(resultUnderArray));
 
 // 9. Удалить из матрицы тот столбец который имеет хотя бы один нулевой элемент. Аналогично для строки.
 let zeroArrRow = [
@@ -392,76 +319,84 @@ console.log(deleteZeroColMatrix(zeroArrCol));
 
 // 10. Написать свою реализацию функций bind, call, map, filter, reduce, forEach.Новая реализация должна по функционалу работать аналогично как и соответствующие стандартные функции.
 
-function customBind(fn, context) {
-  return function() {
-    let unic = Date.now().toString();
-    context[unic] = fn;
-    let result = context[unic]();
-    delete context[unic];
-    return result;
-  };
-}
-
-function customCall(fn, context, ...arg) {
-  let unic= Date.now().toString();
-  context[unic] = fn;
-  let result = context[unic](...arg);
-  delete context[unic];
+Function.prototype.customCall = function(someThis, ...arg){
+  let unicID = Date.now().toString();
+  someThis[unicID] = this;
+  let result = someThis[unicID](...arg);
+  delete someThis[unicID];
   return result;
 }
-function getName() {
+Function.prototype.customBind = function(fn) {
+  const args = Array.from(arguments).slice(1);
+  const self = this;
+    return function() {
+      return self.customCall(fn, ...args);
+    }
+}
+
+let a = {c: 42};
+function someThis() {
+  return this.c;
+}
+let getName = function getName() {
   return this.name;
 }
 let obj = {
   name: "Lisa",
   fn: 25
 }
-console.log(customBind(getName, obj));
-let getNameMyBind = customBind(getName, obj);
-console.log(getNameMyBind());
-console.log(customCall(getName, obj));
+console.log(getName.customBind(obj)());
+console.log(getName.customCall(obj));
+console.log(someThis.customBind(a)());
+console.log(someThis.customCall({c: 100}));
 
 let randomArray = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-let randomArray1 = [45, 36, -10, 0, 21, 78];
-function customMap(arr) {
+
+Array.prototype.customMap = function(callback) {
+  let arr = this;
   let result = [];
   for (let i = 0; i < arr.length; i++) {
-    result[i] = arr[i] + 1;
+    result[i] = callback(arr[i], i, arr);
   }
   return result;
 }
-console.log(customMap(randomArray));
-console.log(customMap(randomArray1));
 
-function customFilter(arr) {
+Array.prototype.customFilter = function(callback) {
+  let arr = this;
   let result = [];
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] >= 5) result.push(arr[i]);
+    if (callback(arr[i], i, arr)) {
+      result.push(arr[i]);
+    }
   }
   return result;
 }
-console.log(customFilter(randomArray));
-console.log(customFilter(randomArray1));
 
-function customReduce(arr) {
-  let sum = 0;
-  for (const n of arr) {
-    sum += n;
+Array.prototype.customReduce = function(callback, result) {
+  let arr = this;
+  let i = 0;
+  if (arguments.length < 2) {
+    i = 1;
+    result = arr[0];
   }
-  return sum;
+  for (; i < arr.length; i++) {
+    result = callback(result, arr[i], i, arr);
+  }
+  return result;
 }
-console.log(customReduce(randomArray));
+
 
 let arrForEach = ["zero", "one", "twoo", "three", "four"];
-function customForEach(arr) {
-  for (let i = 0; i < arr.length; i++) {
-     console.log( `index ${i}: ${arr[i]}`);
-  }
-   return "it is custom forEach";
-}
-console.log(customForEach(arrForEach));
-console.log(customForEach(randomArray));
 
-let f = function(){};
-let f2 = f.customCall({a: 10}, 2);
-console.log(f2);
+Array.prototype.customForEach = function(callback) {
+  let arr = this;
+  for (let i = 0; i < arr.length; i++) {
+    callback(arr[i], i, arr);
+  }
+}
+arrForEach.customForEach((element, index, arr) => {
+  console.log('a[' + index + '] = ' + element);
+});
+arrForEach.forEach((element, index, array) => {
+  console.log('a[' + index + '] = ' + element);
+});
