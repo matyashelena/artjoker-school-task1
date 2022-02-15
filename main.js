@@ -21,27 +21,24 @@ for (let i = 0; i < 20; i++) {
   console.log(sequence.next().value);
 }
 
-const recFibo = (n) => {
-  if (n < 0) {
-    return console.error("Введено некоректное значение")
-  } else if (n <= 1) {
-    return n;
-  } else {
-    return recFibo(n-2) + recFibo(n-1)
-  }
-};
+function fibonachiRecursion (number) {
+  if (number <= 2) {
+    return 1;
+  };
+  return fibonachiRecursion(number-1) + fibonachiRecursion(number-2);
+}
 
 // мемоизированная функция вычисления чисел фибоначчи
-function fibMemo(n, cache) {
-  cache = cache || [];
-  if (n <= 1) {
-    return n;
-  } else if (cache[n]) {
-    return cache[n];
-  } else {
-    cache[n] = fibMemo(n-2, cache) + fibMemo(n-1, cache);
-  }
-  return cache[n];
+function fibonachiMemoization(number) {
+  let cache = {};
+  if (number <= 2) {
+    return 1;
+  };
+  if (number in cache) {
+    return cache[number];
+  };
+  cache[number] = fibonachiMemoization(number-1) + fibonachiMemoization(number-2);
+  return cache[number];
 }
 
 //2. Написать функцию которая проверяет, является ли строка палиндромом.
@@ -58,10 +55,10 @@ function isPalindrom(str) {
 // 3. Реализовать вычисление, периметра/площади, для треугольника, прямоугольника и круга. Реализовать с помощью функций и с помощью классов.
 
 class Triangle {
-  constructor (length1, length2, length3) {
-    this.length1 = length1;
-    this.length2 = length2;
-    this.length3 = length3;
+  constructor (firstSide, secondSide, thirdSide) {
+    this.firstSide = firstSide;
+    this.secondSide = secondSide;
+    this.thirdSide = thirdSide;
   }
   square() {
     function squareroot(n) {
@@ -71,13 +68,13 @@ class Triangle {
       }
       return root;
     }
-    let halfPerimetr = (this.length1 + this.length2 + this.length3) / 2;
-    let result = halfPerimetr * (halfPerimetr - this.length1) * (halfPerimetr - this.length2) * (halfPerimetr - this.length3);
+    let halfPerimetr = (this.firstSide + this.secondSide + this.thirdSide) / 2;
+    let result = halfPerimetr * (halfPerimetr - this.firstSide) * (halfPerimetr - this.secondSide) * (halfPerimetr - this.thirdSide);
     let resultSquare = squareroot(result);
     return Math.floor(resultSquare);
   }
   perimeter() {
-    return this.length1 + this.length2 + this.length3;
+    return this.firstSide + this.secondSide + this.thirdSide;
   }
 }
 
@@ -109,20 +106,10 @@ class Circle {
 let triangle = new Triangle(5, 8, 11);
 let rectangle = new Rectangle(20, 50);
 let circle = new Circle(10);
-console.log("Площадь треугольника " + triangle.square());
-console.log("Периметр треугольника " + triangle.perimeter());
-console.log("Площадь прямоугольника " + rectangle.square());
-console.log("Периметр прямоугольника " + rectangle.perimeter());
-console.log("Площадь круга " + circle.square());
-console.log("Длина окружности " + circle.circumference());
-
 
 // 4. Найти минимальный, максимальный элемент массива. Подсчитать количество нулевых, положительных и отрицательных элементов массива. Написать соответствующие рекурсивные функции.
 
-let anyArray = [7, 10, 1, -12, 2, -158, 1000, 3, 4, 5, -132];
-console.log(anyArray);
-console.log(Math.min.apply(Math, anyArray));
-console.log(Math.max.apply(Math, anyArray));
+let anyArray = [7, 10, 1, -12, 0, 2, -158, 1000, 3, 28, 0, 4, 5, -132];
 
 function minNumberArrayRec(arr) {
   if (arr.length === 1) {
@@ -144,54 +131,56 @@ function maxNumberArrayRec(arr) {
   }
 }
 
-let negativeNumber = [];
-let currentNegativeArr = 0;
-function negativeNumberRec(arr) {
-  currentNegativeArr++;
-  if (arr[currentNegativeArr] < 0) {
+function currentNegativElementInArray (arr) {
+  let negativeNumber = [];
+  let currentNegativeArr = 0;
+  function negative(arr) {
+    currentNegativeArr++;
+    if (arr[currentNegativeArr] < 0) {
       negativeNumber.push(arr[currentNegativeArr]);
     }
-  if (currentNegativeArr > arr.length) {
-    return;
+    if (currentNegativeArr > arr.length) {
+      return;
+    }
+    negative(arr);
+    return negativeNumber.length;
   }
-  negativeNumberRec(arr);
-  return negativeNumber.length;
+  return negative(arr);
 }
 
-let positiveNumber = [];
-let currentPositiveArr = 0;
-function positiveNumbersRec(arr) {
-  currentPositiveArr++;
-  if (arr[currentPositiveArr] > 0) {
-    positiveNumber.push(arr[currentPositiveArr]);
+function currentPositiveElementInArray(arr) {
+  let positiveNumber = [];
+  let currentPositiveArr = 0;
+  function positive(arr) {
+    currentPositiveArr++;
+    if (arr[currentPositiveArr] > 0) {
+      positiveNumber.push(arr[currentPositiveArr]);
+    }
+    if (currentPositiveArr > arr.length) {
+      return;
+    }
+    positive(arr);
+    return positiveNumber.length;
   }
-  if (currentPositiveArr > arr.length) {
-    return;
-  }
-  
-  positiveNumbersRec(arr);
-  return positiveNumber.length;
+  return positive(arr);
 }
 
-let zeroNumber = [];
-let currentZeroArr = 0;
-function zeroNumbersRec(arr) {
-  currentZeroArr++;
-  if (arr[currentZeroArr] === 0) {
-    zeroNumber.push(arr[currentZeroArr]);
+function currentZeroElementInArray(arr) {
+  let zeroNumber = [];
+  let currentZeroArr = 0;
+  function zero(arr) {
+    currentZeroArr++;
+    if (arr[currentZeroArr] === 0) {
+      zeroNumber.push(arr[currentZeroArr]);
+    }
+    if (currentZeroArr > arr.length) {
+      return;
+    }
+    zero(arr);
+    return zeroNumber.length;
   }
-  if (currentZeroArr > arr.length) {
-    return;
-  }
-  positiveNumbersRec(arr);
-  return zeroNumber.length;
+  return zero(arr);
 }
-
-console.log("Минимальное значение = " + minNumberArrayRec(anyArray));
-console.log("Максимальное значение = " + maxNumberArrayRec(anyArray));
-console.log("Колличество положительных элементов в массиве: " + positiveNumbersRec(anyArray));
-console.log("Колличество отрицательных элементов в массиве: " + negativeNumberRec(anyArray));
-console.log("Колличество нулевых элементов в массиве: " + zeroNumbersRec(anyArray));
 
 // 5. Написать функцию преобразования целого числа из десятичной системы счисления в двоичную и наоборот.
 
@@ -243,13 +232,11 @@ function memoFactorial(n) {
   let cache = {};
   if (n === 2) {
     return 2;
-  } else {
-    if (n in cache) {
-      return cache[n];
-    } else {
-      return cache[n] = n * memoFactorial(n-1);
-    }
+  };
+  if (n in cache) {
+    return cache[n];
   }
+  return cache[n] = n * memoFactorial(n-1);
 }
 
 // 8. Транспонировать матрицу, сложить две матрицы.
@@ -264,6 +251,7 @@ let matrix2 = [
   [3, 2, 1],
   [8, 5, 7]
 ];
+
 function transMatrix(arr) {
   let resultTransMatrix = [];
   if (arr.length == 0) {
@@ -271,9 +259,10 @@ function transMatrix(arr) {
   }
   for (let i = 0; i < arr[0].length; i++) {
     resultTransMatrix[i] = [];
-    for (let j = 0; j < arr.length; j++)
+    for (let j = 0; j < arr.length; j++) {
       resultTransMatrix[i][j] = arr[j][i];
     }
+  }
   return resultTransMatrix;
 }
 
@@ -281,7 +270,9 @@ function sumMatrix(arr1, arr2) {
   let result = [];
   for (let i = 0; i < arr1.length; i++) {
     result[i] = [];
-    for ( let j = 0; j < arr1[0].length; j++) result[i][j] = arr1[i][j]+arr2[i][j];
+    for ( let j = 0; j < arr1[0].length; j++) {
+      result[i][j] = arr1[i][j]+arr2[i][j];
+    }
   }
   return result;
 }
@@ -314,8 +305,6 @@ function deleteZeroColMatrix(arr) {
     )
   );
 }
-console.log(deleteZeroRowMatrix(zeroArrRow));
-console.log(deleteZeroColMatrix(zeroArrCol));
 
 // 10. Написать свою реализацию функций bind, call, map, filter, reduce, forEach.Новая реализация должна по функционалу работать аналогично как и соответствующие стандартные функции.
 
@@ -333,22 +322,6 @@ Function.prototype.customBind = function(fn) {
       return self.customCall(fn, ...args);
     }
 }
-
-let a = {c: 42};
-function someThis() {
-  return this.c;
-}
-let getName = function getName() {
-  return this.name;
-}
-let obj = {
-  name: "Lisa",
-  fn: 25
-}
-console.log(getName.customBind(obj)());
-console.log(getName.customCall(obj));
-console.log(someThis.customBind(a)());
-console.log(someThis.customCall({c: 100}));
 
 let randomArray = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -384,7 +357,6 @@ Array.prototype.customReduce = function(callback, result) {
   }
   return result;
 }
-
 
 let arrForEach = ["zero", "one", "twoo", "three", "four"];
 
